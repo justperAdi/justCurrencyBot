@@ -1,8 +1,10 @@
 package com.example.telegrambot.command;
 
 //import javafx.util.Pair;
-import javafx.util.Pair;
 import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Parser {
     private static final Logger log = Logger.getLogger(Parser.class);
@@ -20,19 +22,22 @@ public class Parser {
         ParsedCommand result = new ParsedCommand(Command.NONE, trimText);
 
         if ("".equals(trimText)) return result;
-        Pair<String, String> commandAndText = getDelimitedCommandFromText(trimText);
-        if (isCommand(commandAndText.getKey())) {
-            if (isCommandForMe(commandAndText.getKey())) {
-                String commandForParse = cutCommandFromFullText(commandAndText.getKey());
-                Command commandFromText = getCommandFromText(commandForParse);
-                result.setText(commandAndText.getValue());
-                result.setCommand(commandFromText);
-            } else {
-                result.setCommand(Command.NOTFORME);
-                result.setText(commandAndText.getValue());
-            }
+        Map<String, String> commandAndText = getDelimitedCommandFromText(trimText);
+        for (String key:commandAndText.keySet()){
+            if (isCommand(key)) {
+                if (isCommandForMe(key)) {
+                    String commandForParse = cutCommandFromFullText(key);
+                    Command commandFromText = getCommandFromText(commandForParse);
+                    result.setText(commandAndText.get(key));
+                    result.setCommand(commandFromText);
+                } else {
+                    result.setCommand(Command.NOTFORME);
+                    result.setText(commandAndText.get(key));
+                }
 
+            }
         }
+
         return result;
     }
 
@@ -53,13 +58,19 @@ public class Parser {
         return command;
     }
 
-    private Pair<String, String> getDelimitedCommandFromText(String trimText) {
-        Pair<String, String> commandText;
+    private Map<String, String> getDelimitedCommandFromText(String trimText) {
+        Map<String, String> commandText;
 
         if (trimText.contains(" ")) {
             int indexOfSpace = trimText.indexOf(" ");
-            commandText = new Pair<>(trimText.substring(0, indexOfSpace), trimText.substring(indexOfSpace + 1));
-        } else commandText = new Pair<>(trimText, "");
+            Map<String, String> test = new HashMap<>();
+            test.put(trimText.substring(0, indexOfSpace), trimText.substring(indexOfSpace + 1));
+            commandText = test;
+        } else {
+            Map<String, String> test = new HashMap<>();
+            test.put(trimText, "");
+            commandText = test;
+        }
         return commandText;
     }
 
