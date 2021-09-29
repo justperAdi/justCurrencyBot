@@ -3,15 +3,8 @@ package com.example.telegrambot.service;
 import com.example.telegrambot.bot.Bot;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MessageSender implements Runnable {
     private static final Logger log = Logger.getLogger(MessageSender.class);

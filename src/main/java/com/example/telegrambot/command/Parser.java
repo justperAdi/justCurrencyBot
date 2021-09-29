@@ -1,10 +1,7 @@
 package com.example.telegrambot.command;
 
-import com.vdurmont.emoji.EmojiParser;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
-
-import java.util.List;
 
 public class Parser {
     private static final Logger log = Logger.getLogger(Parser.class);

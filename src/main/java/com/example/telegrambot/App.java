@@ -6,7 +6,6 @@ import com.example.telegrambot.service.MessageSender;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 public class App {
     private static final Logger log = Logger.getLogger(App.class);

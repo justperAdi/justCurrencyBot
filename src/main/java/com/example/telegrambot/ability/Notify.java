@@ -4,7 +4,6 @@ import com.example.telegrambot.bot.Bot;
 import lombok.ToString;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.send.SendSticker;
 
 @ToString
 public class Notify implements Runnable {
