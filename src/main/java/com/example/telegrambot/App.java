@@ -8,7 +8,7 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 public class App {
-    private static final Logger log = Logger.getLogger(App.class);
+//    private static final Logger log = Logger.getLogger(App.class);
     private static final int PRIORITY_FOR_SENDER = 1;
     private static final int PRIORITY_FOR_RECEIVER = 3;
     private static final String BOT_ADMIN = "321644283";
