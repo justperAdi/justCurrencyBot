@@ -1,10 +1,11 @@
 package com.example.telegrambot;
 
 import com.example.telegrambot.bot.Bot;
+import com.example.telegrambot.internal.ApiContextInitializer;
 import com.example.telegrambot.service.MessageReciever;
 import com.example.telegrambot.service.MessageSender;
 import org.apache.log4j.Logger;
-import org.telegram.telegrambots.ApiContextInitializer;
+//import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 public class App {
