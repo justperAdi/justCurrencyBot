@@ -6,6 +6,7 @@ import com.example.telegrambot.command.ParsedCommand;
 import com.example.telegrambot.command.Parser;
 import com.example.telegrambot.handler.*;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -16,9 +17,11 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -138,7 +141,8 @@ public class MessageReciever implements Runnable {
         String line;
         StringBuffer responseContent = new StringBuffer();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatterFrom = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat day = new SimpleDateFormat("dd");
         Date date = new Date();
         int days = Integer.parseInt(day.format(date));
@@ -147,13 +151,18 @@ public class MessageReciever implements Runnable {
         StringBuilder text = new StringBuilder();
         text.append("USD:              EUR          RUB").append(END_LINE);
 
-        int itr = 10;
-        while(itr != 0){
+//        int itr = 10;
+//        while(itr != 0){
             try{
 
-                String urlS = "http://api.currencylayer.com/historical?access_key=5ad0f86d860fdf0390898bb5f551d58c&date="
-                        + formatter.format(date) + "-" + String.valueOf(days);
-//                System.out.println(urlS);
+//                String urlS = "http://api.currencylayer.com/historical?access_key=5ad0f86d860fdf0390898bb5f551d58c&date="
+//                        + formatter.format(date) + "-" + String.valueOf(days);
+////                System.out.println(urlS);
+//
+                String urlS = "http://localhost:8080/currency/last/dozen/" + formatterFrom.format(date)
+                        + (Integer.parseInt(day.format(date)) - 10) + "/"
+                        + formatter.format(date);
+                System.out.println(urlS);
                 URL url = new URL(urlS);
                 connection = (HttpURLConnection) url.openConnection();
 
@@ -162,7 +171,7 @@ public class MessageReciever implements Runnable {
                 connection.setReadTimeout(5000);
 
                 int status = connection.getResponseCode();
-
+//                System.out.println(status);
                 if(status > 299){
                     reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                     while((line = reader.readLine()) != null) {
@@ -177,11 +186,11 @@ public class MessageReciever implements Runnable {
                     reader.close();
                 }
 //            System.out.println(responseContent.toString());
-                System.out.println(responseContent.toString());
+//                System.out.println(responseContent.toString());
 
 
 
-                text.append(parser(responseContent.toString())).append(END_LINE);
+                text.append(parser(responseContent.toString()));
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -190,32 +199,44 @@ public class MessageReciever implements Runnable {
             } finally {
                 connection.disconnect();
             }
-            days--;
-            itr--;
+//            days--;
+//            itr--;
 
-            responseContent.delete(0, responseContent.length());
+//            responseContent.delete(0, responseContent.length());
 
-        }
+//        }
 
         return text;
 
     }
 
-    public static String parser(String responseBody){
-//        JSONObject  jsonArray = new JSONObject (responseBody);
-//        for(int i = 0; i < jsonArray.length(); i++){
-            JSONObject jsonObject = new JSONObject(responseBody);
+    public StringBuilder parser(String responseBody){
+        StringBuilder test = new StringBuilder();
+        JSONArray jsonArray = new JSONArray (responseBody);
+        for(int i = 0; i < jsonArray.length(); i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            if(!jsonObject.getBoolean("success")){
-                System.out.println(jsonObject.getJSONObject("error").getString("info"));
-                return jsonObject.getJSONObject("error").getString("info");
-            }
-            String source = jsonObject.getString("source");
+//            if(!jsonObject.getBoolean("success")){
+//                System.out.println(jsonObject.getJSONObject("error").getString("info"));
+//                return jsonObject.getJSONObject("error").getString("info");
+//            }
+//            String source = jsonObject.getString("source");
+            String source = "USD";
             String date = jsonObject.getString("date");
-            Double eur = jsonObject.getJSONObject("quotes").getDouble("USDEUR");
-            Double  rub = jsonObject.getJSONObject("quotes").getDouble("USDRUB");
-//            System.out.println(date + " " + eur + " " + rub);
-//        }
-        return date + ": " + eur + " " + rub;
+            BigDecimal eur = jsonObject.getBigDecimal("eur");
+            BigDecimal rub = jsonObject.getBigDecimal("rub");
+            System.out.println(date + " " + eur + " " + rub);
+
+            DecimalFormat df = new DecimalFormat("###.#####");
+
+                test.append(date.substring(0, date.indexOf("T")) + " ");
+                test.append(df.format(eur) + " ");
+                test.append(df.format(rub));
+
+            test.append(END_LINE);
+        }
+
+//        return date + ": " + eur + " " + rub;
+        return test;
     }
 }
